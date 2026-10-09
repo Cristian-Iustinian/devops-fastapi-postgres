@@ -1,0 +1,24 @@
+version: '3.8' # Versiunea de sintaxă Docker Compose
+
+services: # Lista containerelor care trebuie să ruleze
+  web: # Primul container (Aplicația ta API)
+    build: . # Construiește imaginea folosind Dockerfile-ul din folderul curent (.)
+    ports:
+      - "8000:8000" # Mapare de port: Portul 8000 de pe calculatorul tău -> Portul 8000 din container
+    environment: # Variabilele de mediu injectate în container
+      - DB_HOST=postgres_db # Numele serviciului devine adresa de rețea (DNS intern)
+      - DB_NAME=myapp
+      - DB_USER=devops
+      - DB_PASSWORD=secret
+      - DB_PORT=5432
+    depends_on:
+      - postgres_db # Îi spune Docker-ului să pornească mai întâi baza de date
+
+  postgres_db: # Al doilea container (Baza de date)
+    image: postgres:15-alpine # Descarcă o imagine gata făcută de pe Docker Hub
+    environment:
+      POSTGRES_DB: myapp
+      POSTGRES_USER: devops
+      POSTGRES_PASSWORD: secret
+    ports:
+      - "5433:5432"
